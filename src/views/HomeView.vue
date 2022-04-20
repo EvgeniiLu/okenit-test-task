@@ -3,6 +3,7 @@
     v-model="selectedName"
     @change="loadUserPosts"
     placeholder="Select User"
+    clearable
   >
     <el-option
       v-for="item in users"
@@ -11,15 +12,13 @@
       :value="item.name"
     />
   </el-select>
-  <el-table :data="posts" stripe style="width: 100%">
-    <el-table-column prop="title" label="Title" width="180" />
-    <el-table-column prop="body" label="Post" width="180" />
+  <el-table :data="posts" @row-click="open($event)" stripe style="width: 100%">
+    <el-table-column prop="title" label="Title" style="width: 50%" />
+    <el-table-column prop="body" label="Post" style="width: 50%" />
   </el-table>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from "@/components/HelloWorld.vue";
 import { ref } from "vue";
 import { loadUsers } from "./api";
 import { loadPosts } from "./api";
@@ -38,13 +37,18 @@ export default {
 
   created: async function () {
     const userList = await loadUsers();
-    userList.forEach((element) => {
-      this.users.push({
-        id: element.id,
-        name: element.name,
-        label: element.name,
-      });
-    });
+    const allPosts = await loadPosts();
+    this.pushUserFunc(userList);
+    this.pushPostFunc(allPosts);
+  },
+
+  watch: {
+    async selectedName() {
+      if (this.selectedName === "") {
+        const posts = await loadPosts();
+        this.pushPostFunc(posts);
+      }
+    },
   },
 
   methods: {
@@ -52,14 +56,35 @@ export default {
       this.users.forEach(async (element) => {
         if (this.selectedName === element.name) {
           const userPosts = await loadPosts(`userId=${element.id}`);
-          userPosts.forEach((post) => {
-            this.posts.push({
-              title: post.title,
-              body: post.body,
-            });
-          });
+          this.pushPostFunc(userPosts);
         }
       });
+    },
+
+    pushUserFunc(arr) {
+      arr.forEach((element) => {
+        this.users.push({
+          id: element.id,
+          name: element.name,
+          label: element.name,
+        });
+      });
+    },
+
+    pushPostFunc(arr) {
+      this.posts = [];
+      arr.forEach((element) => {
+        this.posts.push({
+          userId: element.userId,
+          title: element.title,
+          body: element.body,
+        });
+      });
+    },
+
+    open(e) {
+      this.$router.push("/about");
+      console.log(e);
     },
   },
 };
