@@ -6,15 +6,20 @@
     clearable
   >
     <el-option
-      v-for="item in users"
-      :key="item.name"
+      v-for="item in usersForSelect"
+      :key="item.id"
       :label="item.label"
       :value="item.name"
     />
   </el-select>
-  <el-table :data="posts" @row-click="open($event)" stripe style="width: 100%">
-    <el-table-column prop="title" label="Title" style="width: 50%" />
-    <el-table-column prop="body" label="Post" style="width: 50%" />
+  <el-table
+    :data="posts"
+    @row-click="watchPost($event)"
+    stripe
+    style="width: 100%"
+  >
+    <el-table-column prop="title" label="Title" min-width="35%" />
+    <el-table-column prop="body" label="Post" min-width="65%" />
   </el-table>
 </template>
 
@@ -30,23 +35,25 @@ export default {
   data() {
     return {
       selectedName: ref(""),
+      usersForSelect: [],
       users: [],
       posts: [],
     };
   },
 
   created: async function () {
-    const userList = await loadUsers();
+    this.users = await loadUsers();
+    this.pushUser(this.users);
+
     const allPosts = await loadPosts();
-    this.pushUserFunc(userList);
-    this.pushPostFunc(allPosts);
+    this.pushPost(allPosts);
   },
 
   watch: {
     async selectedName() {
       if (this.selectedName === "") {
         const posts = await loadPosts();
-        this.pushPostFunc(posts);
+        this.pushUser(posts);
       }
     },
   },
@@ -56,14 +63,14 @@ export default {
       this.users.forEach(async (element) => {
         if (this.selectedName === element.name) {
           const userPosts = await loadPosts(`userId=${element.id}`);
-          this.pushPostFunc(userPosts);
+          this.pushPost(userPosts);
         }
       });
     },
 
-    pushUserFunc(arr) {
+    pushUser(arr) {
       arr.forEach((element) => {
-        this.users.push({
+        this.usersForSelect.push({
           id: element.id,
           name: element.name,
           label: element.name,
@@ -71,20 +78,24 @@ export default {
       });
     },
 
-    pushPostFunc(arr) {
+    pushPost(arr) {
       this.posts = [];
       arr.forEach((element) => {
         this.posts.push({
+          id: element.id,
           userId: element.userId,
-          title: element.title,
-          body: element.body,
+          title: element.title[0].toUpperCase() + element.title.slice(1),
+          body: element.body[0].toUpperCase() + element.body.slice(1),
         });
       });
     },
 
-    open(e) {
-      this.$router.push("/about");
-      console.log(e);
+    watchPost(event) {
+      const user = this.users.find((element) => element.id === event.userId);
+      this.$router.push({
+        name: "info",
+        params: { user: JSON.stringify(user), post: JSON.stringify(event) },
+      });
     },
   },
 };
