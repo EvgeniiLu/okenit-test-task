@@ -9,15 +9,15 @@
     <el-menu-item index="2">Информация о посте</el-menu-item>
   </el-menu>
 
-  <div class="card">
-    <div class="card-name"></div>
-    <div class="card-email"></div>
-    <div class="card-company"></div>
+  <div class="card" v-if="user">
+    <div class="card-name">{{ user.name }}</div>
+    <div class="card-email">{{ user.email }}</div>
+    <div class="card-company">{{ user.company.name }}</div>
   </div>
 
-  <div class="post">
-    <div class="post-title"></div>
-    <div class="post-body"></div>
+  <div class="post" v-if="post">
+    <div class="post-title">{{ post.title }}</div>
+    <div class="post-body">{{ post.body }}</div>
   </div>
 
   <div class="comments">
@@ -29,6 +29,7 @@
 <script>
 import { ref } from "vue";
 import { loadPosts } from "./api";
+import { loadUsers } from "./api";
 
 export default {
   name: "InfoViev",
@@ -36,14 +37,14 @@ export default {
   data() {
     return {
       activeIndex: ref("2"),
-      user: {},
-      post: {},
+      user: undefined,
+      post: undefined,
     };
   },
 
   created: async function () {
     this.post = await loadPosts(`/${this.$route.path.match(/\d+/g)[0]}`);
-    console.log(this.post);
+    this.user = await loadUsers(`/${this.post.userId}`);
   },
 
   methods: {
