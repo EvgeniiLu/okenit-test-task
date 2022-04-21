@@ -28,16 +28,22 @@
 </template>
 <script>
 import { ref } from "vue";
+import { loadPosts } from "./api";
 
 export default {
   name: "InfoViev",
 
-  components: {},
-
   data() {
     return {
       activeIndex: ref("2"),
+      user: {},
+      post: {},
     };
+  },
+
+  created: async function () {
+    this.post = await loadPosts(`/${this.$route.path.match(/\d+/g)[0]}`);
+    console.log(this.post);
   },
 
   methods: {

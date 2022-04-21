@@ -47,8 +47,8 @@ export default {
   watch: {
     async selectedName() {
       if (this.selectedName === "") {
-        const posts = await loadPosts();
-        this.pushPost(posts);
+        const allPosts = await loadPosts();
+        this.pushPost(allPosts);
       }
     },
   },
@@ -57,7 +57,7 @@ export default {
     loadUserPosts() {
       this.users.forEach(async (element) => {
         if (this.selectedName === element.name) {
-          const userPosts = await loadPosts(`userId=${element.id}`);
+          const userPosts = await loadPosts(`?userId=${element.id}`);
           this.pushPost(userPosts);
         }
       });
