@@ -6,21 +6,18 @@
     clearable
   >
     <el-option
-      v-for="item in usersForSelect"
-      :key="item.id"
-      :label="item.label"
-      :value="item.name"
+      v-for="user in users"
+      :key="user.id"
+      :label="user.label"
+      :value="user.name"
     />
   </el-select>
-  <el-table
-    :data="posts"
-    @row-click="watchPost($event)"
-    stripe
-    style="width: 100%"
-  >
-    <el-table-column prop="title" label="Title" min-width="35%" />
-    <el-table-column prop="body" label="Post" min-width="65%" />
-  </el-table>
+  <div v-for="item in posts" :key="item.id">
+    <router-link :to="{ name: 'info', params: { id: `${item.id}` } }">
+      <div class="title">{{ item.title }}</div>
+      <div class="body">{{ item.body }}</div>
+    </router-link>
+  </div>
 </template>
 
 <script>
@@ -30,20 +27,18 @@ import { loadPosts } from "./api";
 
 export default {
   name: "HomeView",
-  components: {},
 
   data() {
     return {
       selectedName: ref(""),
-      usersForSelect: [],
       users: [],
       posts: [],
     };
   },
 
   created: async function () {
-    this.users = await loadUsers();
-    this.pushUser(this.users);
+    const users = await loadUsers();
+    this.pushUser(users);
 
     const allPosts = await loadPosts();
     this.pushPost(allPosts);
@@ -53,7 +48,7 @@ export default {
     async selectedName() {
       if (this.selectedName === "") {
         const posts = await loadPosts();
-        this.pushUser(posts);
+        this.pushPost(posts);
       }
     },
   },
@@ -70,7 +65,7 @@ export default {
 
     pushUser(arr) {
       arr.forEach((element) => {
-        this.usersForSelect.push({
+        this.users.push({
           id: element.id,
           name: element.name,
           label: element.name,
@@ -83,18 +78,9 @@ export default {
       arr.forEach((element) => {
         this.posts.push({
           id: element.id,
-          userId: element.userId,
           title: element.title[0].toUpperCase() + element.title.slice(1),
           body: element.body[0].toUpperCase() + element.body.slice(1),
         });
-      });
-    },
-
-    watchPost(event) {
-      const user = this.users.find((element) => element.id === event.userId);
-      this.$router.push({
-        name: "info",
-        params: { user: JSON.stringify(user), post: JSON.stringify(event) },
       });
     },
   },

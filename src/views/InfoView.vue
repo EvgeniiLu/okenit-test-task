@@ -6,7 +6,7 @@
     @select="handleSelect"
   >
     <el-menu-item index="1">К списку постов</el-menu-item>
-    <el-menu-item index="2">Уведомления</el-menu-item>
+    <el-menu-item index="2">Информация о посте</el-menu-item>
   </el-menu>
 
   <div class="card">
@@ -32,23 +32,17 @@ import { ref } from "vue";
 export default {
   name: "InfoViev",
 
-  props: {
-    user: String,
-    post: String,
-  },
-
   components: {},
 
   data() {
     return {
-      activeIndex: ref("1"),
+      activeIndex: ref("2"),
     };
   },
 
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
-      console.log(JSON.parse(this.user), JSON.parse(this.post));
+    handleSelect(key) {
+      if (key === "1") this.$router.push({ name: "home" });
     },
   },
 };
