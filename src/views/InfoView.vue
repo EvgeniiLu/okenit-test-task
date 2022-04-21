@@ -26,13 +26,14 @@
       <div class="comments-body">{{ commemt.body }}</div>
     </div>
   </template>
-  <text-area></text-area>
+  <text-area @add="addCommentFunc"></text-area>
 </template>
 <script>
 import { ref } from "vue";
 import { loadUsers } from "./api";
 import { loadPosts } from "./api";
 import { loadComments } from "./api";
+import { addComment } from "./api";
 import TextArea from "./TextArea.vue";
 
 export default {
@@ -61,6 +62,12 @@ export default {
   methods: {
     handleSelect(key) {
       if (key === "1") this.$router.push({ name: "home" });
+    },
+
+    async addCommentFunc(comment) {
+      comment.postId = this.post.id;
+      const newComment = await addComment(comment);
+      this.comments.push(newComment);
     },
   },
 };

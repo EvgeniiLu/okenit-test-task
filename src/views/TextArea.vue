@@ -4,8 +4,8 @@
       <el-form-item prop="email">
         <el-input v-model="ruleForm.email" />
       </el-form-item>
-      <el-form-item prop="title">
-        <el-input v-model="ruleForm.title" />
+      <el-form-item prop="name">
+        <el-input v-model="ruleForm.name" />
       </el-form-item>
 
       <el-form-item prop="body">
@@ -28,9 +28,9 @@ export default {
   data() {
     return {
       ruleForm: ref({
-        title: "",
-        body: "",
+        name: "",
         email: "",
+        body: "",
       }),
 
       rules: {
@@ -46,7 +46,7 @@ export default {
             trigger: ["blur", "change"],
           },
         ],
-        title: [
+        name: [
           {
             required: true,
             message: "Введите заголовок",
@@ -80,10 +80,12 @@ export default {
     submitForm(formEl) {
       this.$refs[formEl].validate((valid) => {
         if (valid) {
-          console.log("submit!");
-        } else {
-          console.log("error submit!");
-          return false;
+          this.$emit("add", this.ruleForm);
+          this.ruleForm = {
+            name: "",
+            email: "",
+            body: "",
+          };
         }
       });
     },
