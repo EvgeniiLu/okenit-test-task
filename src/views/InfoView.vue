@@ -19,17 +19,19 @@
     <div class="post-title">{{ post.title }}</div>
     <div class="post-body">{{ post.body }}</div>
   </div>
-
-  <div class="comments">
-    <div class="comments-name"></div>
-    <div class="comments-email"></div>
-    <div class="comments-body"></div>
-  </div>
+  <template v-if="comments">
+    <div class="comments" v-for="commemt in comments" :key="commemt.id">
+      <div class="comments-name">{{ commemt.name }}</div>
+      <div class="comments-email">{{ commemt.email }}</div>
+      <div class="comments-body">{{ commemt.body }}</div>
+    </div></template
+  >
 </template>
 <script>
 import { ref } from "vue";
-import { loadPosts } from "./api";
 import { loadUsers } from "./api";
+import { loadPosts } from "./api";
+import { loadComments } from "./api";
 
 export default {
   name: "InfoViev",
@@ -39,12 +41,15 @@ export default {
       activeIndex: ref("2"),
       user: undefined,
       post: undefined,
+      comments: undefined,
     };
   },
 
   created: async function () {
     this.post = await loadPosts(`/${this.$route.path.match(/\d+/g)[0]}`);
     this.user = await loadUsers(`/${this.post.userId}`);
+    this.comments = await loadComments(`?postId=${this.post.id}`);
+    console.log(this.comments);
   },
 
   methods: {

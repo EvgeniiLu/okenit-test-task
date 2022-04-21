@@ -15,6 +15,6 @@ export const loadPosts = (data = false) => {
 };
 
 export const loadComments = (postId) =>
-  fetch(`https://jsonplaceholder.typicode.com/comments?${postId}`).then((r) =>
+  fetch(`https://jsonplaceholder.typicode.com/comments${postId}`).then((r) =>
     r.json()
   );
