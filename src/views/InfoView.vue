@@ -24,24 +24,31 @@
       <div class="comments-name">{{ commemt.name }}</div>
       <div class="comments-email">{{ commemt.email }}</div>
       <div class="comments-body">{{ commemt.body }}</div>
-    </div></template
-  >
+    </div>
+  </template>
+  <text-area></text-area>
 </template>
 <script>
 import { ref } from "vue";
 import { loadUsers } from "./api";
 import { loadPosts } from "./api";
 import { loadComments } from "./api";
+import TextArea from "./TextArea.vue";
 
 export default {
   name: "InfoViev",
 
+  components: {
+    TextArea,
+  },
+
   data() {
     return {
-      activeIndex: ref("2"),
       user: undefined,
       post: undefined,
       comments: undefined,
+
+      activeIndex: ref("2"),
     };
   },
 
@@ -49,7 +56,6 @@ export default {
     this.post = await loadPosts(`/${this.$route.path.match(/\d+/g)[0]}`);
     this.user = await loadUsers(`/${this.post.userId}`);
     this.comments = await loadComments(`?postId=${this.post.id}`);
-    console.log(this.comments);
   },
 
   methods: {
