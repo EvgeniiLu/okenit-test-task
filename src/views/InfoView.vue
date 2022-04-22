@@ -8,7 +8,6 @@
     <el-menu-item index="1">К списку постов</el-menu-item>
     <el-menu-item index="2">Информация о посте</el-menu-item>
   </el-menu>
-
   <div class="card" v-if="user">
     <div class="card-name">{{ user.name }}</div>
     <div class="card-email">{{ user.email }}</div>
@@ -26,6 +25,7 @@
       <div class="comments-body">{{ commemt.body }}</div>
     </div>
   </template>
+
   <text-area @add="addCommentFunc"></text-area>
 </template>
 <script>
@@ -35,6 +35,7 @@ import { loadPosts } from "./api";
 import { loadComments } from "./api";
 import { addComment } from "./api";
 import TextArea from "./TextArea.vue";
+import { ElNotification } from "element-plus";
 
 export default {
   name: "InfoViev",
@@ -42,6 +43,8 @@ export default {
   components: {
     TextArea,
   },
+
+  props: ["transitionInfo", "id"],
 
   data() {
     return {
@@ -59,15 +62,32 @@ export default {
     this.comments = await loadComments(`?postId=${this.post.id}`);
   },
 
+  mounted: function () {
+    if (this.transitionInfo) {
+      ElNotification({
+        title: "Успех",
+        message: "Вы перешли на страницу с информацией о посте",
+        type: "success",
+      });
+    }
+  },
+
   methods: {
     handleSelect(key) {
-      if (key === "1") this.$router.push({ name: "home" });
+      if (key === "1")
+        this.$router.push({ name: "home", params: { transitionHome: true } });
     },
 
     async addCommentFunc(comment) {
       comment.postId = this.post.id;
       const newComment = await addComment(comment);
       this.comments.push(newComment);
+      if (newComment)
+        ElNotification({
+          title: "Успех",
+          message: "Вы отправили сообщение",
+          type: "success",
+        });
     },
   },
 };

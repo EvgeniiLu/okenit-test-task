@@ -13,7 +13,12 @@
     />
   </el-select>
   <div v-for="item in posts" :key="item.id">
-    <router-link :to="{ name: 'info', params: { id: `${item.id}` } }">
+    <router-link
+      :to="{
+        name: 'info',
+        params: { id: `${item.id}`, transitionInfo: true },
+      }"
+    >
       <div class="title">{{ item.title }}</div>
       <div class="body">{{ item.body }}</div>
     </router-link>
@@ -24,13 +29,17 @@
 import { ref } from "vue";
 import { loadUsers } from "./api";
 import { loadPosts } from "./api";
+import { ElNotification } from "element-plus";
 
 export default {
   name: "HomeView",
 
+  props: ["transitionHome"],
+
   data() {
     return {
       selectedName: ref(""),
+
       users: [],
       posts: [],
     };
@@ -42,6 +51,16 @@ export default {
 
     const allPosts = await loadPosts();
     this.pushPost(allPosts);
+  },
+
+  mounted: function () {
+    if (this.transitionHome) {
+      ElNotification({
+        title: "Успех",
+        message: "Вы перешли на страницу с постами",
+        type: "success",
+      });
+    }
   },
 
   watch: {
