@@ -2,18 +2,22 @@
   <div class="textarea">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
       <el-form-item prop="email">
-        <el-input v-model="ruleForm.email" />
+        <el-input v-model="ruleForm.email" placeholder="Email" />
       </el-form-item>
       <el-form-item prop="name">
-        <el-input v-model="ruleForm.name" />
+        <el-input v-model="ruleForm.name" placeholder="Заголовок" />
       </el-form-item>
 
       <el-form-item prop="body">
-        <el-input v-model="ruleForm.body" type="textarea" />
+        <el-input
+          v-model="ruleForm.body"
+          placeholder="Сообщение"
+          type="textarea"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
-          >Create</el-button
+          >Отправить</el-button
         >
       </el-form-item>
     </el-form>
