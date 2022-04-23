@@ -34,7 +34,7 @@ import { ElNotification } from "element-plus";
 export default {
   name: "HomeView",
 
-  props: ["transitionHome"],
+  props: ["id", "transitionHome"],
 
   data() {
     return {
@@ -48,9 +48,8 @@ export default {
   created: async function () {
     const users = await loadUsers();
     this.pushUser(users);
-
-    const allPosts = await loadPosts();
-    this.pushPost(allPosts);
+    const userPosts = await loadPosts();
+    this.pushPost(userPosts);
   },
 
   mounted: function () {
@@ -74,9 +73,9 @@ export default {
 
   methods: {
     loadUserPosts() {
-      this.users.forEach(async (element) => {
-        if (this.selectedName === element.name) {
-          const userPosts = await loadPosts(`?userId=${element.id}`);
+      this.users.forEach(async (value) => {
+        if (this.selectedName === value.name) {
+          const userPosts = await loadPosts(`?userId=${value.id}`);
           this.pushPost(userPosts);
         }
       });

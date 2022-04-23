@@ -14,6 +14,10 @@ const routes = [
     component: () => import("../views/InfoView.vue"),
     props: true,
   },
+  {
+    path: "/:pathMatch(.*)*",
+    component: () => import("../views/NotFound404.vue"),
+  },
 ];
 
 const router = createRouter({
