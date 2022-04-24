@@ -1,21 +1,4 @@
 <template>
-  <div class="header">
-    <div class="select">
-      <el-select
-        v-model="selectedName"
-        @change="loadUserPosts"
-        placeholder="Выберите пользователя"
-        clearable
-      >
-        <el-option
-          v-for="user in users"
-          :key="user.id"
-          :label="user.label"
-          :value="user.name"
-        />
-      </el-select>
-    </div>
-  </div>
   <div class="container">
     <div class="posts">
       <router-link
@@ -35,71 +18,43 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { loadUsers } from "./api";
 import { loadPosts } from "./api";
-import { ElNotification } from "element-plus";
 
 export default {
-  name: "HomeView",
+  name: "PostsView",
 
-  props: ["id", "transitionHome"],
+  props: ["nameid", "id"],
 
   data() {
     return {
-      selectedName: ref(""),
-      loading: ref(true),
-
-      users: [],
       posts: [],
     };
   },
 
   created: async function () {
-    const users = await loadUsers();
-    this.pushUser(users);
     const userPosts = await loadPosts();
     this.pushPost(userPosts);
   },
 
-  mounted: function () {
-    if (this.transitionHome) {
-      ElNotification({
-        title: "Успех",
-        message: "Вы перешли на страницу с постами",
-        type: "success",
-      });
-    }
-  },
-
   watch: {
-    async selectedName() {
-      if (this.selectedName === "") {
-        this.loading = true;
-        const allPosts = await loadPosts();
-        this.pushPost(allPosts);
+    async nameid(id) {
+      let allPosts = undefined;
+      if (!this.nameid) {
+        allPosts = await loadPosts();
+      } else {
+        allPosts = await loadPosts(id);
       }
+      this.pushPost(allPosts);
     },
   },
 
   methods: {
     loadUserPosts() {
-      this.loading = true;
       this.users.forEach(async (value) => {
         if (this.selectedName === value.name) {
           const userPosts = await loadPosts(`?userId=${value.id}`);
           this.pushPost(userPosts);
         }
-      });
-    },
-
-    pushUser(arr) {
-      arr.forEach((element) => {
-        this.users.push({
-          id: element.id,
-          name: element.name,
-          label: element.name,
-        });
       });
     },
 
@@ -112,7 +67,6 @@ export default {
           body: element.body,
         });
       });
-      this.loading = false;
     },
   },
 };
@@ -122,16 +76,6 @@ export default {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-.header {
-  display: block;
-  width: 100%;
-  padding: 30px 30px;
-  background: #409eff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1;
 }
 .posts {
   position: relative;

@@ -81,7 +81,7 @@ export default {
   methods: {
     handleSelect(key) {
       if (key === "1")
-        this.$router.push({ name: "home", params: { transitionHome: true } });
+        this.$router.push({ name: "home", params: { transitionUsers: true } });
     },
 
     async addCommentFunc(comment) {
