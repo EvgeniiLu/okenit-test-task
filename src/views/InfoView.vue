@@ -50,7 +50,10 @@ export default {
     TextArea,
   },
 
-  props: ["transitionInfo", "id"],
+  props: {
+    transitionInfo: String,
+    id: String,
+  },
 
   data() {
     return {

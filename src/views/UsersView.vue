@@ -16,7 +16,7 @@
       </el-select>
     </div>
   </div>
-  <posts-view :nameid="nameid"></posts-view>
+  <posts-view :userid="userid"></posts-view>
 </template>
 
 <script>
@@ -31,12 +31,14 @@ export default {
     PostsView,
   },
 
-  props: ["transitionUsers"],
+  props: {
+    transitionUsers: String,
+  },
 
   data() {
     return {
       selectedName: ref(""),
-      nameid: false,
+      userid: 0,
       users: [],
     };
   },
@@ -58,11 +60,11 @@ export default {
   methods: {
     loadUserPosts() {
       if (this.selectedName === "") {
-        this.nameid = false;
+        this.userid = 0;
       } else {
         this.users.forEach(async (value) => {
           if (this.selectedName === value.name) {
-            this.nameid = `?userId=${value.id}`;
+            this.userid = value.id;
           }
         });
       }

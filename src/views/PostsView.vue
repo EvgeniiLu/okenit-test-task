@@ -23,7 +23,10 @@ import { loadPosts } from "./api";
 export default {
   name: "PostsView",
 
-  props: ["nameid", "id"],
+  props: {
+    userid: Number,
+    id: String,
+  },
 
   data() {
     return {
@@ -37,14 +40,14 @@ export default {
   },
 
   watch: {
-    async nameid(id) {
-      let allPosts = undefined;
-      if (!this.nameid) {
-        allPosts = await loadPosts();
+    async userid(id) {
+      let userPosts = undefined;
+      if (!this.userid) {
+        userPosts = await loadPosts();
       } else {
-        allPosts = await loadPosts(id);
+        userPosts = await loadPosts(`?userId=${id}`);
       }
-      this.pushPost(allPosts);
+      this.pushPost(userPosts);
     },
   },
 
