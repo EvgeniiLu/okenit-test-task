@@ -1,4 +1,8 @@
 <template>
+  <users-posts-select
+    @allposts="loadUsersPosts"
+    @userposts="loadUsersPosts"
+  ></users-posts-select>
   <div class="container">
     <div class="posts">
       <router-link
@@ -7,7 +11,7 @@
         :key="item.id"
         :to="{
           name: 'info',
-          params: { id: `${item.id}`, transitionInfo: true },
+          params: { id: `${item.id}`, transitionFromPosts: true },
         }"
       >
         <div class="title">{{ item.title }}</div>
@@ -18,14 +22,20 @@
 </template>
 
 <script>
-import { loadPosts } from "./api";
+import { loadPost_s } from "./api";
+import { ElNotification } from "element-plus";
+import UsersPostsSelect from "./UsersPostsSelect";
 
 export default {
-  name: "PostsView",
+  name: "UsersPosts",
+
+  components: {
+    UsersPostsSelect,
+  },
 
   props: {
-    userid: Number,
     id: String,
+    transitionFromInfo: String,
   },
 
   data() {
@@ -35,30 +45,29 @@ export default {
   },
 
   created: async function () {
-    const userPosts = await loadPosts();
+    const userPosts = await loadPost_s();
     this.pushPost(userPosts);
   },
 
-  watch: {
-    async userid(id) {
-      let userPosts = undefined;
-      if (!this.userid) {
-        userPosts = await loadPosts();
-      } else {
-        userPosts = await loadPosts(`?userId=${id}`);
-      }
-      this.pushPost(userPosts);
-    },
+  mounted: function () {
+    if (this.transitionFromInfo) {
+      ElNotification({
+        title: "Успех",
+        message: "Вы перешли на страницу с постами",
+        type: "success",
+      });
+    }
   },
 
   methods: {
-    loadUserPosts() {
-      this.users.forEach(async (value) => {
-        if (this.selectedName === value.name) {
-          const userPosts = await loadPosts(`?userId=${value.id}`);
-          this.pushPost(userPosts);
-        }
-      });
+    async loadUsersPosts(data) {
+      let userPosts = null;
+      if (!data) {
+        userPosts = await loadPost_s();
+      } else {
+        userPosts = await loadPost_s(`?userId=${data}`);
+      }
+      this.pushPost(userPosts);
     },
 
     pushPost(arr) {

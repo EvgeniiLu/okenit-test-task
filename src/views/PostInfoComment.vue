@@ -27,7 +27,7 @@
 import { ref } from "vue";
 
 export default {
-  name: "InfoViev",
+  name: "PostInfoComment",
 
   data() {
     return {

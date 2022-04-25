@@ -1,22 +1,23 @@
 import { createRouter, createWebHistory } from "vue-router";
-import UsersView from "../views/UsersView.vue";
+import UsersPosts from "../views/UsersPosts.vue";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: UsersView,
+    component: UsersPosts,
     props: true,
   },
   {
     path: "/info/:id",
     name: "info",
-    component: () => import("../views/InfoView.vue"),
+    component: () => import("../views/PostInfo.vue"),
     props: true,
   },
   {
     path: "/:pathMatch(.*)*",
-    component: () => import("../views/NotFound404.vue"),
+    name: "notfound",
+    component: () => import("../views/NotFound.vue"),
   },
 ];
 

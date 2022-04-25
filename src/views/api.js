@@ -1,4 +1,4 @@
-export const loadUsers = (data = false) => {
+export const loadUser_s = (data = false) => {
   let param = "";
   if (data) param = data;
   return fetch(`https://jsonplaceholder.typicode.com/users${param}`).then((r) =>
@@ -6,7 +6,7 @@ export const loadUsers = (data = false) => {
   );
 };
 
-export const loadPosts = (data = false) => {
+export const loadPost_s = (data = false) => {
   let param = "";
   if (data) param = data;
   return fetch(`https://jsonplaceholder.typicode.com/posts${param}`).then((r) =>
@@ -19,7 +19,7 @@ export const loadComments = (postId) =>
     r.json()
   );
 
-export const addComment = (data) =>
+export const sendComment = (data) =>
   fetch("https://jsonplaceholder.typicode.com/comments", {
     method: "POST",
     body: JSON.stringify(data),

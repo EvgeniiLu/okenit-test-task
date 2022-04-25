@@ -31,48 +31,54 @@
       </div>
     </template>
 
-    <text-area @add="addCommentFunc"></text-area>
+    <post-info-comment @add="addComment"></post-info-comment>
   </div>
 </template>
 <script>
 import { ref } from "vue";
-import { loadUsers } from "./api";
-import { loadPosts } from "./api";
+import { loadUser_s } from "./api";
+import { loadPost_s } from "./api";
 import { loadComments } from "./api";
-import { addComment } from "./api";
-import TextArea from "./TextArea.vue";
+import { sendComment } from "./api";
+import PostInfoComment from "./PostInfoComment.vue";
 import { ElNotification } from "element-plus";
 
 export default {
-  name: "InfoViev",
+  name: "PostInfo",
 
   components: {
-    TextArea,
+    PostInfoComment,
   },
 
   props: {
-    transitionInfo: String,
+    transitionFromPosts: String,
     id: String,
   },
 
   data() {
     return {
-      user: undefined,
-      post: undefined,
-      comments: undefined,
+      user: null,
+      post: null,
+      comments: null,
 
       activeIndex: ref("2"),
     };
   },
 
   created: async function () {
-    this.post = await loadPosts(`/${this.$route.path.match(/\d+/g)[0]}`);
-    this.user = await loadUsers(`/${this.post.userId}`);
-    this.comments = await loadComments(`?postId=${this.post.id}`);
+    this.post = await loadPost_s(`/${this.$route.params.id}`);
+    if (!Object.keys(this.post).length) {
+      this.$router.push({
+        name: "notfound",
+      });
+    } else {
+      this.user = await loadUser_s(`/${this.post.userId}`);
+      this.comments = await loadComments(`?postId=${this.post.id}`);
+    }
   },
 
   mounted: function () {
-    if (this.transitionInfo) {
+    if (this.transitionFromPosts) {
       ElNotification({
         title: "Успех",
         message: "Вы перешли на страницу с информацией о посте",
@@ -84,12 +90,15 @@ export default {
   methods: {
     handleSelect(key) {
       if (key === "1")
-        this.$router.push({ name: "home", params: { transitionUsers: true } });
+        this.$router.push({
+          name: "home",
+          params: { transitionFromInfo: true },
+        });
     },
 
-    async addCommentFunc(comment) {
+    async addComment(comment) {
       comment.postId = this.post.id;
-      const newComment = await addComment(comment);
+      const newComment = await sendComment(comment);
       this.comments.push(newComment);
       if (newComment)
         ElNotification({
