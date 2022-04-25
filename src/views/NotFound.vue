@@ -1,8 +1,24 @@
 <template>
   <div class="empty">
     <div>Пустая страница</div>
+    <el-button type="primary" plain @click="goHome"
+      >На главную страницу</el-button
+    >
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    goHome() {
+      this.$router.push({
+        name: "home",
+      });
+    },
+  },
+};
+</script>
+
 <style scoped>
 .empty {
   width: 100%;
@@ -13,7 +29,11 @@
   font-size: 40px;
   color: rgb(255, 255, 255);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.empty div {
+  padding-bottom: 20px;
 }
 </style>

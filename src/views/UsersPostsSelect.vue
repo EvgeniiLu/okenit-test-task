@@ -23,7 +23,7 @@ import { ref } from "vue";
 import { loadUser_s } from "./api";
 
 export default {
-  name: "UsersView",
+  name: "UsersPostsSelect",
 
   data() {
     return {
