@@ -67,13 +67,17 @@ export default {
 
   created: async function () {
     this.post = await loadPost_s(`/${this.$route.params.id}`);
-    if (!Object.keys(this.post).length) {
+    if (!this.post) {
       this.$router.push({
         name: "notfound",
       });
     } else {
-      this.user = await loadUser_s(`/${this.post.userId}`);
-      this.comments = await loadComments(`?postId=${this.post.id}`);
+      const [loadUser, loadComments1] = await Promise.all([
+        loadUser_s(`/${this.post.userId}`),
+        loadComments(`?postId=${this.post.id}`),
+      ]);
+      this.user = loadUser;
+      this.comments = loadComments1;
     }
   },
 

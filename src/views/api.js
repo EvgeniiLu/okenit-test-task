@@ -9,8 +9,11 @@ export const loadUser_s = (data = false) => {
 export const loadPost_s = (data = false) => {
   let param = "";
   if (data) param = data;
-  return fetch(`https://jsonplaceholder.typicode.com/posts${param}`).then((r) =>
-    r.json()
+  return fetch(`https://jsonplaceholder.typicode.com/posts${param}`).then(
+    (r) => {
+      if (r.ok) return r.json();
+      else return r.ok;
+    }
   );
 };
 
