@@ -9,12 +9,12 @@ export const loadUser_s = (data = false) => {
 export const loadPost_s = (data = false) => {
   let param = "";
   if (data) param = data;
-  return fetch(`https://jsonplaceholder.typicode.com/posts${param}`).then(
-    (r) => {
-      if (r.ok) return r.json();
-      else return r.ok;
-    }
-  );
+  return fetch(`https://jsonplaceholder.typicode.com/posts${param}`)
+    .then((r) => {
+      if (r.status === 200) return r.json();
+      else throw new Error(r.status);
+    })
+    .catch((err) => console.log(err));
 };
 
 export const loadComments = (postId) =>
